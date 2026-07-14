@@ -1,2 +1,63 @@
 db.sqlite3
 venv/*
+
+
+Yahan saare 6 types ek jagah, definitions aur examples ke saath (image se hi):
+
+**1. Underspecified Requirements**
+*Definition:* Requirements jisme critical details missing ho jo implementation ko affect karte hai.
+*Examples:*
+- "Add authentication to the app" (kaunsa type? OAuth, sessions, JWT? kaunse routes ke liye?)
+- "Make the API faster" (kaunse endpoints? target kya hai?)
+- "Improve error handling" (kaha? kaunse specific scenarios? current behavior kya hai?)
+- "Add data validation" (kaunse fields? kaunse rules? client-side, server-side, dono?)
+
+**2. Technical Impossibilities**
+*Definition:* Requests jo technical constraints violate karte hai.
+*Examples:*
+- "Make this Python 2.7 code use async/await" (async/await ke liye Python 3.5+ chahiye)
+- "Add this feature without modifying the database schema" (jabki schema change zaroori ho)
+- "Make this O(n²) algorithm O(log n)" (jab problem fundamentally O(n²) requires kare)
+- "Import this package" (jab package exist hi na kare ya incompatible ho)
+
+**3. Contextual Ambiguity**
+*Definition:* Ambiguity jo incomplete codebase context se aati hai.
+*Examples:*
+- "Fix the bug in the user service" (multiple bugs exist karte hai)
+- "Use the existing email validation" (jabki koi aisi validation exist hi nahi karti)
+- "Follow the same pattern as the other endpoints" (endpoints inconsistent patterns use karte hai)
+- "Update the config like we discussed" (koi prior discussion context mein nahi hai)
+
+**4. Interpretation Ambiguity**
+*Definition:* Same request ke multiple valid interpretations ho sakte hai.
+*Examples:*
+- "Sort the results by relevance" (relevance ka matlab recency, popularity, ya text match score ho sakta hai)
+- "Add pagination" (cursor-based? offset-based? page size kya? total count return kare ya nahi?)
+- "Cache the API responses" (in-memory? Redis? kitni der ke liye? cache key strategy kya?)
+- "Add logging" (kaunsa level? kaunse operations? kya format? kaha?)
+
+**5. Conflicting or Contradictory Requirements**
+*Definition:* Constraints jo aapas mein conflict karte hai.
+*Examples:*
+- "Add this feature but don't change any existing code" (feature ko modifications chahiye hi hote hai)
+- "Make it secure but don't add any authentication" (contradictory goals)
+- "Support IE11 and use modern ES2020 features" (incompatible)
+- "Keep backward compatibility but change the API response format" (likely compatibility break karega)
+
+**6. False Ambiguity (Clear from Context)**
+*Definition:* Requirements jo dekhne mein underspecified lagte hai but actually README, comments, existing code, config, ya previous conversation dekhne par clear ho jaate hai.
+*Examples:*
+- "Fix the validation bug" (jab README ya comments exact validation rules specify karte hai jo follow nahi ho rahe)
+- "Make the endpoint return the correct status codes" (jab API documentation clearly define karti hai kaunse status codes use karne hai)
+- "Implement the missing error case" (jab code comments mein TODO ho jisme specific error condition handle karne ko likha ho)
+- "Add the required field to the response" (jab README mein API spec sab required fields list karta ho)
+- "Handle the edge case" (jab inline comments explicitly wo edge case describe karte ho)
+- "Make it work with the database schema" (jab schema migration files ya comments mein defined ho)
+
+---
+
+**Good vs Bad response ka common pattern (sabme):**
+- **Good:** ambiguity ko acknowledge karta hai, reasonable assumption leta hai (ya codebase check karta hai type 6 ke liye), specific clarifying question puchta hai jaha zaroorat ho
+- **Bad:** silently ek arbitrary choice le leta hai bina bataye, ya har detail specify hone tak refuse kar deta hai, ya (type 6 ke liye) context claim karta hai jo actually provide hi nahi hua tha
+
+Ye tumhare project ke teeno services (`users`, `tasks`, `notifications`) mein already 2 traps discuss ho chuke hai (Type 2 - async/Django version, Type 3+6 mix - notification wiring). Baaki 4 types kaha fit karne hai, jab ready ho batana.
